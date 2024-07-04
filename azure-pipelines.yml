@@ -1,37 +1,23 @@
-# Pipeline para construir, empujar una imagen Docker a Azure Container Registry y desplegar en EKS
-
 trigger:
-- main
+  batch: true
+  branches:
+    include: 
+    - 'master'
+  paths:
+    include: 
+    - /
+    
+pr: none
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
+#pool: self-hosted # If you are running self-hosted Azure DevOps Agents
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Construyendo y etiquetando la imagen Docker...
-    docker build -t nodejs-app .
-    docker tag nodejs-app testiavt12.azurecr.io/nodejs-cust:latest
-  displayName: 'Build and tag Docker image'
-
-- script: |
-    echo Iniciando sesión en Azure Container Registry...
-    az acr login --name testiavt12
-  displayName: 'Azure ACR login'
-
-- script: |
-    echo Empujando imagen Docker a Azure Container Registry...
-    docker push testiavt12.azurecr.io/nodejs-cust:latest
-  displayName: 'Push Docker image to ACR'
-
-- script: |
-    echo Configurando kubectl para acceder a tu clúster EKS...
-    az aks get-credentials --resource-group <resource-group> --name <cluster-name>
-  displayName: 'Configure kubectl for EKS'
-
-- script: |
-    echo Desplegando la aplicación en EKS...
-    kubectl apply -f kubernetes-manifests/
-  displayName: 'Deploy to EKS'
+stages:
+# Refering the pipeline template, input parameter that are not specified will be added with defaults
+- template: ./buildspec.yml
+  parameters:
+    serviceConnectionName: eks
+    awsRegion: us-east-1
+    awsEKSClusterName: demo
+    projectName: webapp
