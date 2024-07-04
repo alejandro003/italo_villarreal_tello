@@ -39,7 +39,7 @@ steps:
     echo Checking kubectl access
     kubectl get svc
     echo Logging in to Azure Container Registry...
-    az acr login --name $(azureContainerRegistry)
+    az acr login --name testiavt12
   displayName: 'EKS and ACR login'
 
 - script: |
