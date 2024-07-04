@@ -30,11 +30,6 @@ steps:
   displayName: 'Install dependencies'
 
 - script: |
-    echo Logging in to Docker Hub...
-    
-  displayName: 'Docker Hub login'
-
-- script: |
     echo Logging in to Amazon EKS...
     aws eks --region $(awsRegion) update-kubeconfig --name $(eksClusterName)
     echo Checking config
@@ -69,9 +64,3 @@ steps:
     kubectl apply -f deployment.yml
     kubectl rollout restart deployment hello-world-deployment
   displayName: 'Deploy to EKS'
-
-artifacts:
-  files:
-    - app.js
-    - package.json
-    - package-lock.json
