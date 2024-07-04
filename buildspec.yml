@@ -32,18 +32,18 @@ phases:
       - echo Pulling the official Node.js image...
       - docker pull node:14
       - echo Tagging the official Node.js image...
-      - docker tag node:14 public.ecr.aws/x1g7f4a5/test-iavt12:nodejs-official
+      - docker tag node:14 public.ecr.aws/x1g7f4a5/test_iavt12:nodejs-official
       - echo Pushing the official Node.js image...
-      - docker push public.ecr.aws/x1g7f4a5/test-iavt12:nodejs-official
+      - docker push public.ecr.aws/x1g7f4a5/test_iavt12:nodejs-official
       - echo Building the customized Node.js image...
       - docker build -t nodejs-customized:latest .
-      - docker tag nodejs-customized:latest public.ecr.aws/x1g7f4a5/test-iavt12:nodejs-cust
+      - docker tag nodejs-customized:latest public.ecr.aws/x1g7f4a5/test_iavt12:nodejs-cust
 
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the customized Node.js image...
-      - docker push public.ecr.aws/x1g7f4a5/test-iavt12:nodejs-cust
+      - docker push public.ecr.aws/x1g7f4a5/test_iavt12:nodejs-cust
       - echo Deploying the latest customized image to the cluster
       - kubectl apply -f deployment.yml
       - kubectl rollout restart deployment hello-world-deployment
