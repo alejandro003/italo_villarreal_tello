@@ -5,11 +5,11 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  dockerRegistryServiceConnection: '<NombreDeTuConexionDeServicio>'
-  imageRepository: 'testiavt12.azurecr.io'
-  containerRegistry: 'testiavt12'
-  kubernetesServiceConnection: 'eks'
-  kubernetesNamespace: 'default'
+  azureContainerRegistry: 'testiavt12.azurecr.io'
+  dockerImageName: 'nodejs-cust'
+  resourceGroup: '1-872379c6-playground-sandbox'
+  eksClusterName: 'demo'
+  awsRegion: 'us-east-1'
 
 steps:
 - task: UsePythonVersion@0
@@ -29,44 +29,49 @@ steps:
     npm install
   displayName: 'Install dependencies'
 
-- task: Docker@2
-  inputs:
-    containerRegistry: $(dockerRegistryServiceConnection)
-    command: login
-    username: $(dockerRegistryServiceConnection)
-    password: $(dockerRegistryServiceConnection)
+- script: |
+    echo Logging in to Docker Hub...
+    
+  displayName: 'Docker Hub login'
+
+- script: |
+    echo Logging in to Amazon EKS...
+    aws eks --region $(awsRegion) update-kubeconfig --name $(eksClusterName)
+    echo Checking config
+    kubectl config view --minify
+    echo Checking kubectl access
+    kubectl get svc
+    echo Logging in to Azure Container Registry...
+    az acr login --name $(azureContainerRegistry)
+  displayName: 'EKS and ACR login'
 
 - script: |
     echo Build started on `date`
     echo Pulling the official Node.js image...
     docker pull node:14
     echo Tagging the official Node.js image...
-    docker tag node:14 $(imageRepository)/nodejs-official:latest
-    echo Building the customized Node.js image...
-    docker build -t nodejs-customized:latest .
-    docker tag nodejs-customized:latest $(imageRepository)/nodejs-cust:latest
+    docker tag node:14 $(azureContainerRegistry)/$(dockerImageName):latest
   displayName: 'Build Docker Image'
 
-- task: Docker@2
-  inputs:
-    containerRegistry: $(dockerRegistryServiceConnection)
-    command: push
-    repository: $(imageRepository)/nodejs-cust
-    tags: latest
-
-- task: Kubernetes@1
-  inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: $(kubernetesServiceConnection)
-    azureResourceGroup: '<TuGrupoDeRecursos>'
-    kubernetesCluster: '<TuCluster>'
-    namespace: $(kubernetesNamespace)
-    command: apply
-    useConfigurationFile: true
-    configuration: 'deployment.yml'
+- script: |
+    echo Building the customized Node.js image...
+    docker build -t nodejs-customized:latest .
+    docker tag nodejs-customized:latest $(azureContainerRegistry)/$(dockerImageName):latest
+  displayName: 'Build customized Docker image'
 
 - script: |
-    echo Build completed on `date`
+    echo Pushing the customized Node.js image...
+    docker push $(azureContainerRegistry)/$(dockerImageName):latest
+  displayName: 'Push Docker image'
+
+- script: |
     echo Deploying the latest customized image to the cluster
+    kubectl apply -f deployment.yml
     kubectl rollout restart deployment hello-world-deployment
-  displayName: 'Restart Kubernetes Deployment'
+  displayName: 'Deploy to EKS'
+
+artifacts:
+  files:
+    - app.js
+    - package.json
+    - package-lock.json
