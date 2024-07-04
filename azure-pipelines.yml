@@ -1,23 +1,72 @@
 trigger:
-  batch: true
-  branches:
-    include: 
-    - 'master'
-  paths:
-    include: 
-    - /
-    
-pr: none
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
-#pool: self-hosted # If you are running self-hosted Azure DevOps Agents
 
-stages:
-# Refering the pipeline template, input parameter that are not specified will be added with defaults
-- template: ./buildspec.yml
-  parameters:
-    serviceConnectionName: eks
-    awsRegion: us-east-1
-    awsEKSClusterName: demo
-    projectName: webapp
+variables:
+  dockerRegistryServiceConnection: '<NombreDeTuConexionDeServicio>'
+  imageRepository: 'testiavt12.azurecr.io'
+  containerRegistry: 'testiavt12'
+  kubernetesServiceConnection: 'eks'
+  kubernetesNamespace: 'default'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+
+- script: |
+    echo Installing app dependencies...
+    curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/linux/amd64/kubectl
+    chmod +x ./kubectl
+    mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+    echo 'export PATH=$PATH/$HOME/bin' >> ~/.bashrc
+    source ~/.bashrc
+    echo 'Check kubectl version'
+    kubectl version --short --client
+    npm install
+  displayName: 'Install dependencies'
+
+- task: Docker@2
+  inputs:
+    containerRegistry: $(dockerRegistryServiceConnection)
+    command: login
+    username: $(dockerRegistryServiceConnection)
+    password: $(dockerRegistryServiceConnection)
+
+- script: |
+    echo Build started on `date`
+    echo Pulling the official Node.js image...
+    docker pull node:14
+    echo Tagging the official Node.js image...
+    docker tag node:14 $(imageRepository)/nodejs-official:latest
+    echo Building the customized Node.js image...
+    docker build -t nodejs-customized:latest .
+    docker tag nodejs-customized:latest $(imageRepository)/nodejs-cust:latest
+  displayName: 'Build Docker Image'
+
+- task: Docker@2
+  inputs:
+    containerRegistry: $(dockerRegistryServiceConnection)
+    command: push
+    repository: $(imageRepository)/nodejs-cust
+    tags: latest
+
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: $(kubernetesServiceConnection)
+    azureResourceGroup: '<TuGrupoDeRecursos>'
+    kubernetesCluster: '<TuCluster>'
+    namespace: $(kubernetesNamespace)
+    command: apply
+    useConfigurationFile: true
+    configuration: 'deployment.yml'
+
+- script: |
+    echo Build completed on `date`
+    echo Deploying the latest customized image to the cluster
+    kubectl rollout restart deployment hello-world-deployment
+  displayName: 'Restart Kubernetes Deployment'
