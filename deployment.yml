@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-world-container
-        image: public.ecr.aws/k1v6l3y1/test-iavt12:nodejs-cust
+        image: public.ecr.aws/x1g7f4a5/test-iavt12:nodejs-cust
         ports:
         - containerPort: 8080
         imagePullPolicy: Always  
