@@ -14,7 +14,7 @@ phases:
       - kubectl version --short --client
       - npm install
       - echo Loggingg in to Docker Hub...
-      - echo "dckr_pat_7AHOLAyU9kxCPhYFjqT6IYl3dD0" | docker login -u ivillarreal1 --password-stdin
+      - echo "dckssr_pat_7AHOLAyU9kxCPhYFjqT6IYl3dD0" | docker login -u ivillarreal1 --password-stdin
 
   pre_build:
     commands:
