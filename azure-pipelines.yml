@@ -43,20 +43,20 @@ steps:
 - script: |
     echo Build started on `date`
     echo Pulling the official Node.js image...
-    docker pull node:14
+    sudo docker pull node:14
     echo Tagging the official Node.js image...
-    docker tag node:14 $(azureContainerRegistry)/$(dockerImageName):latest
+    sudo docker tag node:14 $(azureContainerRegistry)/$(dockerImageName):latest
   displayName: 'Build Docker Image'
 
 - script: |
     echo Building the customized Node.js image...
-    docker build -t nodejs-customized:latest .
-    docker tag nodejs-customized:latest $(azureContainerRegistry)/$(dockerImageName):latest
+    sudo docker build -t nodejs-customized:latest .
+    sudo docker tag nodejs-customized:latest $(azureContainerRegistry)/$(dockerImageName):latest
   displayName: 'Build customized Docker image'
 
 - script: |
     echo Pushing the customized Node.js image...
-    docker push $(azureContainerRegistry)/$(dockerImageName):latest
+    sudo docker push $(azureContainerRegistry)/$(dockerImageName):latest
   displayName: 'Push Docker image'
 
 - script: |
