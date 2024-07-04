@@ -13,8 +13,7 @@ phases:
       - echo 'Check kubectl version'
       - kubectl version --short --client
       - npm install
-      - echo Loggingg in to Docker Hub...
-      - echo "dckssr_pat_7AHOLAyU9kxCPhYFjqT6IYl3dD0" | docker login -u ivillarreal1 --password-stdin
+
 
   pre_build:
     commands:
