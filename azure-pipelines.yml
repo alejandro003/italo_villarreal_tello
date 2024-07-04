@@ -63,4 +63,4 @@ steps:
     echo Deploying the latest customized image to the cluster
     kubectl apply -f deployment.yml
     kubectl rollout restart deployment hello-world-deployment
-  displayName: 'Deploy to EKS'
+  displayName: 'Deploy to EKsS'
