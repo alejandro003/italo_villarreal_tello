@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: tester  # Nombre del agente que has instalado en Azure Pipelines
 
 variables:
   azureContainerRegistry: 'testiavt12.azurecr.io'
