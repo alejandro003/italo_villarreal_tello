@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: default
 
 variables:
   azureContainerRegistry: 'testiavt12.azurecr.io'
@@ -27,9 +27,9 @@ steps:
     echo 'Check kubectl version'
     kubectl version --short --client
     sudo apt-get update
-    sudo apt-get install -y nodejs npm
-    npm install
-  displayName: 'Install dependencies and Node.js'
+    sudo apt-get install -y nodejs npm   # Instala Node.js y npm
+    npm install                          # Instala las dependencias de Node.js
+  displayName: 'Install dependencies'
 
 - script: |
     echo Logging in to Amazon EKS...
