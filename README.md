@@ -1,6 +1,6 @@
 # Repositorio de Italo Villarreal
 
-#2.1 Aplicación Contenerizada
+# 2.1 Aplicación Contenerizada
 - 1 Cree del cluster EKS en AWS, de nombre le puse Demo en una cuenta donde hice una POC para el cliente CCL:
 
 <p align="center">
@@ -22,4 +22,10 @@
 
 <p align="center">
     <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/Imagen3.png">
+</p>
+
+# 2.2 Diseño de infraestructura
+
+<p align="center">
+    <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/arquitectura_delfosti.drawio.png">
 </p>
