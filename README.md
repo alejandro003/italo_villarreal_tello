@@ -29,3 +29,24 @@
 <p align="center">
     <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/arquitectura_delfosti.drawio.png">
 </p>
+
+
+# 2.3 Estimación de costos
+https://calculator.aws/#/estimate?id=e2515379a7bbcb65329bf7dc837e80c46251b705 - TEST
+<p align="center">
+    <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/Ambiente%20test.png">
+</p>
+
+
+https://calculator.aws/#/estimate?id=b302532e90acc852d10da2e5c9ce5fe14cf12759 - QA
+<p align="center">
+    <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/Ambiente%20QA.png">
+</p>
+
+
+https://calculator.aws/#/estimate?id=9d8cd4345133276ea937c22fbdea6083745fcf32 - PRD
+<p align="center">
+    <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/Ambiente%20prd.png">
+</p>
+
+
