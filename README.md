@@ -19,3 +19,7 @@
 
 
 - 3 Las pruebas finales fueron al ingresar por el balanceador de AWS para ver el mensaje de Hello World en NodeJS:
+
+<p align="center">
+    <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/Imagen3.png">
+</p>
