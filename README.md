@@ -12,3 +12,10 @@
 <p align="center">
     <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/Imagen2.jpg">
 </p>
+
+<p align="center">
+    <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/Imagen21.jpg">
+</p>
+
+
+- 3 Las pruebas finales fueron al ingresar por el balanceador de AWS para ver el mensaje de Hello World en NodeJS:
