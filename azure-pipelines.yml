@@ -1,0 +1,66 @@
+trigger:
+- main
+
+pool:
+  name: default
+
+variables:
+  azureContainerRegistry: 'testiavt12.azurecr.io'
+  dockerImageName: 'nodejs-cust'
+  resourceGroup: '1-872379c6-playground-sandbox'
+  eksClusterName: 'demo'
+  awsRegion: 'us-east-1'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.8'
+    addToPath: true
+
+- script: |
+    echo Installing app dependencies...
+    curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/linux/amd64/kubectl
+    chmod +x ./kubectl
+    mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+    echo 'export PATH=$PATH/$HOME/bin' >> ~/.bashrc
+    source ~/.bashrc
+    echo 'Check kubectl version'
+    kubectl version --short --client
+    sudo apt-get update
+    sudo apt-get install -y nodejs npm   # Instala Node.js y npm
+    npm install                          # Instala las dependencias de Node.js
+  displayName: 'Install dependencies'
+
+- script: |
+    echo Logging in to Amazon EKS...
+    aws eks --region $(awsRegion) update-kubeconfig --name $(eksClusterName)
+    echo Checking config
+    kubectl config view --minify
+    echo Checking kubectl access
+    kubectl get svc
+  displayName: 'EKS'
+
+- script: |
+    echo Build started on `date`
+    echo Pulling the official Node.js image...
+    sudo docker pull node:14
+    echo Tagging the official Node.js image...
+    sudo docker tag node:14 $(azureContainerRegistry)/$(dockerImageName):latest
+  displayName: 'Build Docker Image'
+
+- script: |
+    echo Building the customized Node.js image...
+    sudo docker build -t nodejs-customized:latest .
+    sudo docker tag nodejs-customized:latest $(azureContainerRegistry)/$(dockerImageName):latest
+  displayName: 'Build customized Docker image'
+
+- script: |
+    echo Pushing the customized Node.js image...
+    sudo docker push $(azureContainerRegistry)/$(dockerImageName):latest
+  displayName: 'Push Docker image'
+
+- script: |
+    echo Deploying the latest customized image to the cluster
+    kubectl apply -f deployment.yml
+    kubectl rollout restart deployment hello-world-deployment
+  displayName: 'Deploy to EKS'
