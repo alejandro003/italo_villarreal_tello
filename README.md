@@ -48,3 +48,7 @@ https://calculator.aws/#/estimate?id=9d8cd4345133276ea937c22fbdea6083745fcf32 - 
 <p align="center">
     <img src="https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/Images/Ambiente%20prd.png">
 </p>
+
+# 2.4 Levantamiento de infraestructura
+
+- El archivo de Terraform se llama [diagrama_iac.tf](https://github.com/alejandro003/italo_villarreal_tello/blob/italo-villarreal/diagrama_iac.tf)
